@@ -1,0 +1,157 @@
+%% =========================================================================
+%% @author Leonardo Florez-Valencia (florez-l@javeriana.edu.co)
+%% =========================================================================
+
+%% == Includes
+\documentclass{article}
+\usepackage[spanish]{babel}
+\usepackage[latin9]{inputenc}
+\usepackage{algorithm,algpseudocode}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+
+%% == Title
+\title{Subsecuencia contigua creciente más larga}
+\author{Leonardo Flórez-Valencia}
+\date{2014-2019}
+
+%% == Main document
+\begin{document}
+
+\maketitle
+
+\section{Descripción y formalización del problema}
+
+El problema, informalmente, se define como: encontrar el sub-arreglo creciente
+más largo de un arreglo.
+
+Así, para el arreglo $S=\left[ 9, 7, 7, 1, 2, 3, 4, 6, 5 \right]$ el sub-arreglo más
+largo sería $LICS = \left[ 1, 2, 3, 4, 6 \right]$.
+
+Formalmente, se dice que: Dada una secuencia $S$
+de elementos $a_{i} \in \mathbb{T}$, donde se define la relación de
+orden total $<$, informar la secuencia $L \in S$
+donde los elementos contiguos cumplan la relación de orden total
+$\le$.
+Ahora, la definición del contrato sería:
+\begin{itemize}
+\item \textbf{Entradas}: Una secuencia $S$ de $n$
+  números: $S=\left<a_{1},a_{2},\cdots,a_{n}\right>$ donde
+  $a_{i}\in\mathbb{T}$ y en $\mathbb{T}$ está definida la relación
+  de orden total $\le$.
+\item \textbf{Salidas}: Una subsecuencia $L=\left<a_{i},\cdots,a_{j}\right>\mid a_{i}\le a_{i+1}\le\cdots\le a_{j-1} \land L \in S$
+\end{itemize}
+
+\section{Fuerza bruta}
+\begin{algorithm}[H]
+  \begin{algorithmic}[1]
+    \Procedure{LICS}{$S$}
+      \State$maxS \leftarrow -\infty$
+      \State$maxI \leftarrow 0$
+      \State$maxJ \leftarrow 0$
+      \For{$i \leftarrow 1$ \textbf{to} $\left|S\right|$}
+        \For{$j \leftarrow i$ \textbf{to} $\left|S\right|$}
+          \State$isOrdered \leftarrow True$
+          \For{$k \leftarrow i+1$ \textbf{to} $j$}
+            \If{$S[k] \le S[k-1]$}
+              \State $isOrdered \leftarrow False$
+            \EndIf
+          \EndFor
+          \If{$isOrdered \land maxS < \left(j - i\right)$}
+            \State$maxS \leftarrow j - i$
+            \State$maxI \leftarrow i$
+            \State$maxJ \leftarrow j$
+          \EndIf
+        \EndFor
+      \EndFor
+      \State\Return $[maxI, maxJ]$
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo de LICS fuerza bruta.}
+\end{algorithm}
+
+Este algoritmo presenta una cota superior de $O(n^3)$, calculada por simple
+inspección de código.
+
+\section{Dividir y vencer}
+\begin{algorithm}[H]
+  \begin{algorithmic}[1]
+    \Procedure{LICSAux}{$S,b,e$}
+      \If{$b = e$}
+        \State\Return$[b, b]$
+      \ElsIf{$e<b$}
+        \State\Return$[0, -1]$
+      \Else
+        \State$q \leftarrow \lfloor (b+e) \div 2 \rfloor$
+        \State$[L_i, L_j] \leftarrow LICSAux\left( S, b, q-1 \right)$
+        \State$[R_i, R_j] \leftarrow LICSAux\left( S, q+1, e \right)$
+        \State$[C_i, C_j] \leftarrow LICSPivot\left( S, b,q, e \right)$
+        \If{$(L_j - L_i)>(R_j - R_i) \land (L_j - L_i)>(C_j - C_i)$}
+          \State\Return$[L_i, L_j]$
+        \ElsIf{$(R_j - R_i)>(L_j - L_i) \land (R_j - R_i)>(C_j - C_i)$}
+          \State\Return$[R_i, R_j]$
+        \Else
+          \State\Return$[C_i, C_j]$
+        \EndIf
+      \EndIf
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo de LICS dividir y vencer.}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \begin{algorithmic}[1]
+    \Procedure{LICSPivot}{$S,b,q,e$}
+      \State$i \leftarrow q$
+      \While{$b < i \land S[i-1] \le S[i]$}
+        \State$i \leftarrow i - 1$
+      \EndWhile
+      \State$j \leftarrow q$
+      \While{$j < e \land S[j] \le S[j+1]$}
+        \State$j \leftarrow j + 1$
+      \EndWhile
+      \State\Return$[i, j]$
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo de LICS dividir y vencer: función del pivote.}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \begin{algorithmic}[1]
+    \Procedure{LICS}{$S$}
+      \State\Return$LICSAux(S,1,|S|)$
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo de LICS dividir y vencer: función principal.}
+\end{algorithm}
+
+\section{Invariantes}
+
+El algoritmo de ``fuerza bruta'' tiene como invariante:
+
+El algoritmo ``dividir-y-vencer'' tiene como invariante:
+
+\section{Análisis de complejidad}
+
+En el caso del algoritmo de ``fuerza bruta'', resulta evidente por inspección de
+código que su orden de complejidad es $O(n^3)$.
+
+Para la versión ``dividir-y-vencer'', se tiene la ecuación de recurrencia:
+
+\begin{equation}
+T(n)=
+\left\{
+  \begin{array}{rcl}
+    O(1) & ; & b\ge e\\
+    2T\left(\frac{n}{2}\right)+O(n) & ; & b<e
+  \end{array}
+\right.;
+\end{equation}
+que tiene un orden de complejidad $\Theta(n \log n)$, después de usar el teorema maestro.
+
+
+\end{document}
+
+
+
+%% eof - $RCSfile$

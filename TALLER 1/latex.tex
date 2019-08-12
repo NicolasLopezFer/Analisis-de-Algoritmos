@@ -1,0 +1,117 @@
+\documentclass[12pt]{report}
+\usepackage[spanish]{babel}
+\usepackage[latin9]{inputenc}
+\usepackage{algorithm,algpseudocode}
+\usepackage{amsfonts}
+
+\title {
+    {Taller 1}  \\
+    {\large Pontificia Universidad Javeriana}\\
+}
+\author{Nicolas Lopez Fernandez }
+\date{Agosto 1 2019}
+
+\begin{document}
+
+\maketitle
+
+\section{Descripcion y formalizacion del problema}
+El problema, informalmente, se define como encontrar el dato minimo y dato maximo de un arreglo rotado.
+
+Asi, para el arreglo S=[67,89,90,23,25,34,50,60], el minimo es 23 y el maximo es 90.
+
+Formalmente, se dice que: Dada una secuenca rotada $S$ de elementos $a_{i} \in \mathbb{T}$, donde se defina la relacion de orden parcial !!!!MENOR!!!! para el minimo y !!!!MAYOR!!!! para el maximo, informar los numeros $b$,$c \in$ $S$ donde $b$ cumple con la relacion de orden parcial !!!!MENOR!!!! y $c$ cumple con la relacion de orden parcial !!!!MAYOR!!!! de toda la secuencia $S$. Ahora, la definicion del contrato seria:
+\begin{itemize}
+
+\item \textbf{Entradas}: Una secuencia rotada $S$ de $n$
+    numeros: $S=\left<a_{n-1},a_{n},a_{1},a_{2},\cdots,a_{n-2}\right>$ donde
+    $a_{i}\in \mathbb{T}$
+\item \textbf{Salidas}: Dos resultados $b=a_{1}$ y $c=a_{n}$ donde $b$ y $c$ son el menor y       mayor dato de la secuencia rotada $S$
+
+\end{itemize}
+
+\section{Fuerza bruta}
+\begin{algorithm}[H]
+  \begin{algorithmic}[1]
+    \Procedure{MaxMinRotadoBF}{$S$}
+      \State$maxi \leftarrow 0$
+      \State$mini \leftarrow 0$
+      \For{$i \leftarrow 1$ \textbf{to} $\left|S\right|$}
+        \If{$S[i] \ge maxi$}
+            \State$maxi \leftarrow S[i]$
+        \EndIf
+      \EndFor
+      \State$mini \leftarrow maxi$
+      \For{$i \leftarrow 1$ \textbf{to} $\left |S\right|$}
+        \If{$S[i] \le mini$}
+            \State$mini \leftarrow S[i]$
+        \EndIf
+      \EndFor
+      \State\Return $[mini, maxi]$
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo maximo y minimo por fuerza bruta.}
+\end{algorithm}
+
+\section{Dividir y vencer}
+\begin{algorithm}[H]
+  \begin{algorithmic}[2]
+    \Procedure{MMRotado}{$S,l,h$}
+        \If{$h \le l$}
+            \State\Return $[0,-1]$
+        \ElsIf{$h==l$}
+            \State\Return $[S[l],S[h]]$
+        \ElsIf{$h==1$}
+            \State\Return $[S[0],S[1]]$
+        \ElsIf{$S[0]>S[1]$}
+            \State\Return $[S[0],S[1]]$
+        \Else
+            \If{$h==2$}
+                \State $S.append(\left |S\right| + 1)$
+                \State $h \leftarrow h + 1$
+            \EndIf
+            \State $mitad \leftarrow\floor{(h+2)/2}$
+            \If{$S[mitad] > S[mitad-1]$}
+                \State $aux \leftarrow S[mitad:\left |S\right|]$
+                \State\Return $MMRotado(aux,0,\left |S\right|)$
+            \EndIf
+            \If{$S[mitad] < S[mitad+1]$}
+                \State $aux = S[0:mitad+1]$
+                \State\Return $MMRotado(aux,0,mitad)$
+            \EndIf
+        \EndIf
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo Maximo y minimo por dividir y vencer.}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \begin{algorithmic}[3]
+    \Procedure{MaxMinRotadoDV}{$S$}
+        \state\Return $MMRotado(S,0,\left|S\right|)$
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo Maximo y minimo por dividir y vencer.}
+\end{algorithm}
+
+\section{Invariantes}
+El algoritmo de ''Fuerza Bruta'' tiene como invariante: En cada ciclo de busqueda se encuentra o el maximo o el minimo
+
+El algoritmo de ''Dividir-y-vender'' tiene como invariante: El menor y el mayor siempre esta en la secuencia que se esta dividiendo
+
+\section{Analisis de complejidad}
+En el algoritmo de ''Fuerza Bruta'', resulta evidente por inspeccion de codigo que su orden de complejidad es $0(n^3)$
+
+Para la version ''Dividir-y-vencer'', se tiene la ecuacion de recurrencia:
+
+\begin{equation}
+T(n)=
+\left\{
+    \begin{array}{rcl}
+        O(1) &; &b \ge e\\
+        T\left(\frac{n}{2}\right)+O(n) & ; & b<e
+    \end{array}
+\right.;
+\end{equation}
+que tiene un orden de complejidad $\Theta(\log n)$, despues de usar el teorema maestro.
+\end{document}

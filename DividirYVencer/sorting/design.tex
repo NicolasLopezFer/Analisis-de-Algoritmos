@@ -1,0 +1,79 @@
+%% =========================================================================
+%% @author Leonardo Florez-Valencia (florez-l@javeriana.edu.co)
+%% =========================================================================
+
+%% == Includes
+\documentclass{article}
+\usepackage[spanish]{babel}
+\usepackage[latin9]{inputenc}
+\usepackage{algorithm,algpseudocode}
+\usepackage{amsfonts}
+
+%% == Title
+\title{Análisis del problema de ordenamiento de secuencias}
+\author{Leonardo Flórez-Valencia}
+\date{2014-2019}
+
+%% == Main document
+\begin{document}
+
+\maketitle
+
+\section{Descripción y formalización del problema}
+
+El problema, informalmente, se define como: Ordenar una
+``lista'' / ``arreglo'' / ``vector'' / ``conjunto'' / ``montón'' de números.
+
+Formalmente, se dice que: Dada una secuencia $S$
+de elementos $a_{i} \in \mathbb{T}$, donde se define la relación de
+orden parcial $\le$, producir una nueva secuencia $S'$
+donde los elementos contiguos cumplan la relación de orden parcial
+$\le$.
+Ahora, la definición del contrato sería:
+\begin{itemize}
+\item \textbf{Entradas}: Una secuencia $S$ de $n$
+  números: $S=\left<a_{1},a_{2},\cdots,a_{n}\right>$ donde
+  $a_{i}\in\mathbb{T}$ y en $\mathbb{T}$ está definida la relación
+  de orden parcial $\le$.
+\item \textbf{Salidas}: Una permutación $S'=\left<a'_{1},a'_{2},\cdots,a'_{n}\right>\mid a'_{1}\le a'_{2}\le\cdots\le a'_{n}\land a_{i}'\in S\forall i$
+\end{itemize}
+
+\section{Ordenamiento burbuja}
+\begin{algorithm}[H]
+  \begin{algorithmic}[1]
+    \Procedure{BubbleSort}{$S$}
+      \For{$i \leftarrow 1$ \textbf{to} $\left|S\right|$}
+        \For{$j \leftarrow 1$ \textbf{to} $\left|S\right|-i$}
+          \If{$S\left[j+1\right]<S\left[j\right]$}
+            \State$aux \leftarrow S\left[j\right]$
+            \State$S\left[j\right] \leftarrow S\left[j+1\right]$
+            \State$S\left[j+1\right] \leftarrow aux$
+          \EndIf
+        \EndFor
+      \EndFor
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo de ordenamiento por burbuja.}
+\end{algorithm}
+
+\section{Ordenamiento por inserción}
+\begin{algorithm}[H]
+  \begin{algorithmic}[1]
+    \Procedure{InsertionSort}{$S$}
+      \For{$j\leftarrow2$ \textbf{to} $\left|S\right|$}
+        \State$k\leftarrow S\left[j\right]$
+        \State$i\leftarrow j-1$
+        \While{$0<i\land k<S\left[i\right]$}
+          \State$S\left[i+1\right]\leftarrow S\left[i\right]$
+          \State$i\leftarrow i-1$
+        \EndWhile
+        \State$S\left[i+1\right]\leftarrow k$
+      \EndFor
+    \EndProcedure
+  \end{algorithmic}
+  \caption{Algoritmo de ordenamiento por inserción.}
+\end{algorithm}
+
+\end{document}
+
+%% eof - $RCSfile$
